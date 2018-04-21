@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="clicks">You clicked 0 times</div>
+    <div id="scrolls">You scrolled 0 times</div>
+    <script>
+     const clicks = document.getElementById("clicks")
+     const scrolls = document.getElementById("scrolls")
+
+     // JavaScript module pattern. By using immediate functions and closures,
+     // we can emulate modules with function and interface with objects.
+     let MouseCounterModule = function() {
+       // creates private variables and functions
+       let numClicks = 0
+
+       const handleClick = () => {
+         clicks.textContent = "You clicked " + (++numClicks) + " times"
+       }
+
+       // return an object containing a closure that can access private
+       // variables and functions through [[Environment]].
+       return {
+         countClicks: () => {
+           document.addEventListener("click", handleClick)
+         }
+       }
+     }()
+
+     // Augment module by creating new private variables and add property that
+     // captures the environment.
+     MouseCounterModule = (function(module) {
+       let numScrolls = 0
+
+       const handleScroll = () => {
+         scrolls.textContent = "You clicked " + (++numScrolls) + " times"
+       }
+
+       module.countScrolls = () => {
+         document.addEventListener("wheel", handleScroll)
+       }
+
+       return module
+     })(MouseCounterModule)
+
+     MouseCounterModule.countClicks()
+     MouseCounterModule.countScrolls()
+    </script>
+  </body>
+</html>
